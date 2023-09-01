@@ -1,0 +1,41 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "pip-abandoned"
+authors = [{name = "chris48s", email = "git@chris-shaw.dev"}]
+description = "TODO"
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dynamic = ["version"]
+requires-python = ">=3.8"
+dependencies = [
+    "requests>=2,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "flit==3.9.0",
+    "isort==5.12.0",
+    "flake8==6.1.0",
+    "black==23.7.0",
+    "pytest==7.4.0",
+    "pytest-cov==4.1.0",
+]
+
+[project.urls]
+Home = "https://github.com/chris48s/pip-abandoned"
+Source = "https://github.com/chris48s/pip-abandoned"
+
+[tool.flit.module]
+name = "pip_abandoned"

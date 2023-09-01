@@ -1,0 +1,37 @@
+name: Run tests
+on: [push, pull_request]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          make install
+
+      - name: Run tests
+        run: make test
+
+      - name: Check coding standards
+        run: make lint
+
+      - name: Ensure package builds
+        run: flit build
+
+      - name: Upload coverage report to codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
