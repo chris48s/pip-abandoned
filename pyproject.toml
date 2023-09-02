@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "pip-abandoned"
 authors = [{name = "chris48s", email = "git@chris-shaw.dev"}]
-description = "TODO"
+description = "Search for abandoned and deprecated python packages"
 readme = "README.md"
 license = {file = "LICENSE"}
 classifiers = [
@@ -21,6 +21,7 @@ dynamic = ["version"]
 requires-python = ">=3.8"
 dependencies = [
     "requests>=2,<3",
+    "rich>=1"
 ]
 
 [project.optional-dependencies]
@@ -39,3 +40,6 @@ Source = "https://github.com/chris48s/pip-abandoned"
 
 [tool.flit.module]
 name = "pip_abandoned"
+
+[project.scripts]
+pip-abandoned = "pip_abandoned:main"
