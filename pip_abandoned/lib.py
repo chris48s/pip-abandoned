@@ -102,7 +102,13 @@ def get_archived_packages(dist_urls, api_data):
     ]
 
 
-def output_table(packages):
+def is_inactive(distribution):
+    return "Development Status :: 7 - Inactive" in distribution.metadata.get_all(
+        "Classifier"
+    )
+
+
+def output_archived_table(packages):
     table = Table(show_header=True)
 
     table.add_column("Package")
@@ -114,10 +120,24 @@ def output_table(packages):
     console.print(table)
 
 
+def output_inactive_table(packages):
+    table = Table(show_header=True)
+
+    table.add_column("Package")
+
+    for package in packages:
+        table.add_row(package.name)
+
+    console.print(table)
+
+
 def search(gh_token, path, verbosity):
     set_log_level(verbosity)
 
-    dists = distributions(path=[path])
+    dists = list(distributions(path=[path]))
+
+    inactive_packages = [dist for dist in dists if is_inactive(dist)]
+
     dist_urls = []
     for distribution in dists:
         url = get_github_repo_url(distribution)
@@ -128,14 +148,28 @@ def search(gh_token, path, verbosity):
         dist_urls, query_github_api(gh_token, query)
     )
 
+    if len(inactive_packages) == 0:
+        console.print(
+            "No packages with the trove classifier 'Development Status :: 7 - Inactive' were found",
+            style="bold",
+        )
+    else:
+        console.print(
+            "Packages with the trove classifier 'Development Status :: 7 - Inactive' were found:",
+            style="bold",
+        )
+        output_inactive_table(inactive_packages)
+
     if len(archived_packages) == 0:
         console.print(
             "No packages associated with archived GitHub repos were found", style="bold"
         )
-        return 0
+    else:
+        console.print(
+            "Packages associated with archived GitHub repos were found:", style="bold"
+        )
+        output_archived_table(archived_packages)
 
-    console.print(
-        "Packages associated with archived GitHub repos were found:", style="bold"
-    )
-    output_table(archived_packages)
+    if len(inactive_packages) == 0 and len(archived_packages) == 0:
+        return 0
     return 1
