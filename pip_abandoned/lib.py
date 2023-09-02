@@ -135,6 +135,8 @@ def search(gh_token, path, verbosity):
     set_log_level(verbosity)
 
     dists = list(distributions(path=[path]))
+    if len(dists) == 0:
+        raise Exception(f"Couldn't find any packages in {path}")
 
     inactive_packages = [dist for dist in dists if is_inactive(dist)]
 
