@@ -10,3 +10,6 @@ pip_abandoned.egg-info/
 # test coverage
 .coverage
 coverage.xml
+
+# venv
+.venv

@@ -13,3 +13,8 @@ Development Tasks:
 * Run the test suite: `make test`
 * Run lint checks: `make lint`
 * Auto-format: `make format`
+
+Virtual Env Management:
+
+* `source .venv/bin/activate`
+* `deactivate`
