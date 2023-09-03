@@ -36,3 +36,7 @@ There are two things we need to supply:
 
 - A path to a python (virtual) environment to search. This is passed as a positional parameter.
 - A GitHub API token. This is set using an environment variable called `GH_TOKEN`. We need to provide this because `pip-abandoned` used the GitHub GraphQL API to efficiently query many repos at once. The advantage of this is that it is fast. The tradeoff is that authentication is required. A PAT with read-only access to public repos will be sufficient for most cases.
+
+## Other Projects
+
+`pip-abandoned` takes inspiration from [pip-audit](https://github.com/pypa/pip-audit), another great project.
