@@ -21,7 +21,7 @@ dynamic = ["version"]
 requires-python = ">=3.8"
 dependencies = [
     "requests>=2,<3",
-    "rich>=1",
+    "rich>=10",
     "importlib-metadata>=4.6; python_version < '3.10'",
 ]
 

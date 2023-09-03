@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 
 import requests
 from rich.console import Console
+from rich.logging import RichHandler
 from rich.table import Table
 
 if sys.version_info < (3, 10):
@@ -12,7 +13,7 @@ if sys.version_info < (3, 10):
 else:
     from importlib.metadata import Prepared, distributions
 
-logging.basicConfig(format="%(levelname)s: %(message)s")
+logging.basicConfig(format="%(message)s", handlers=[RichHandler(show_time=False)])
 logger = logging.getLogger(__name__)
 
 console = Console()
@@ -83,7 +84,7 @@ def get_graphql_query(dist_urls):
 
 
 def query_github_api(gh_token, query):
-    logger.info(f"Querying GitHub API: {query}")
+    logger.info(f"Querying GitHub API:\n{query}")
 
     resp = requests.post(
         "https://api.github.com/graphql",
@@ -92,11 +93,11 @@ def query_github_api(gh_token, query):
     )
     resp.raise_for_status()
     body = resp.json()
-    logger.info(f"Response from GitHub API: {json.dumps(body, indent=2)}")
+    logger.info(f"Response from GitHub API:\n{json.dumps(body, indent=2)}")
 
     if body.get("errors"):
         logger.warning(
-            f"Encountered errors calling GitHub API: {json.dumps(body['errors'], indent=2)}"
+            f"Encountered errors calling GitHub API:\n{json.dumps(body['errors'], indent=2)}"
         )
 
     return body["data"]
