@@ -38,6 +38,12 @@ def github_repo_url_or_none(url):
     return None
 
 
+def strip_suffix(url):
+    if url.endswith(".git"):
+        return url[:-4]
+    return url
+
+
 def get_github_repo_url(distribution):
     urls = []
 
@@ -52,6 +58,7 @@ def get_github_repo_url(distribution):
                 pass
 
     urls = [u for u in urls if u]  # strip Nones
+    urls = [strip_suffix(u) for u in urls]
     urls = list(set(urls))  # De-dupe
 
     if len(urls) > 1:

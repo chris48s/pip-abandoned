@@ -3,4 +3,4 @@ Name: project-urls
 Version: 1.0.0
 Home-page: https://example.com
 Project-URL: Documentation, https://chris48s.github.io/does-not-exist
-Project-URL: Source, https://github.com/chris48s/does-not-exist
+Project-URL: Source, https://github.com/chris48s/does-not-exist.git
