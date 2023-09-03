@@ -1,11 +1,16 @@
 import json
 import logging
-from importlib.metadata import Prepared, distributions
+import sys
 from urllib.parse import urlparse
 
 import requests
 from rich.console import Console
 from rich.table import Table
+
+if sys.version_info < (3, 10):
+    from importlib_metadata import Prepared, distributions
+else:
+    from importlib.metadata import Prepared, distributions
 
 logging.basicConfig(format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
