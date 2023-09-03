@@ -103,9 +103,8 @@ def get_archived_packages(dist_urls, api_data):
 
 
 def is_inactive(distribution):
-    return "Development Status :: 7 - Inactive" in distribution.metadata.get_all(
-        "Classifier"
-    )
+    classifiers = distribution.metadata.get_all("Classifier") or []
+    return "Development Status :: 7 - Inactive" in classifiers
 
 
 def output_archived_table(packages):
@@ -145,10 +144,14 @@ def search(gh_token, path, verbosity):
         url = get_github_repo_url(distribution)
         if url:
             dist_urls.append((distribution, url))
-    query = get_graphql_query(dist_urls)
-    archived_packages = get_archived_packages(
-        dist_urls, query_github_api(gh_token, query)
-    )
+
+    if len(dist_urls) > 0:
+        query = get_graphql_query(dist_urls)
+        archived_packages = get_archived_packages(
+            dist_urls, query_github_api(gh_token, query)
+        )
+    else:
+        archived_packages = []
 
     if len(inactive_packages) == 0:
         console.print(
