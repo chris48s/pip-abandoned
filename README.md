@@ -1,7 +1,7 @@
 # pip-abandoned
 
 [![Run tests](https://github.com/chris48s/pip-abandoned/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/chris48s/pip-abandoned/actions/workflows/test.yml)
-<!-- TODO: codecov badge -->
+[![codecov](https://codecov.io/gh/chris48s/pip-abandoned/graph/badge.svg?token=3TSCfIKLiy)](https://codecov.io/gh/chris48s/pip-abandoned)
 [![PyPI Version](https://img.shields.io/pypi/v/pip-abandoned.svg)](https://pypi.org/project/pip-abandoned/)
 ![License](https://img.shields.io/pypi/l/pip-abandoned.svg)
 ![Python Compatibility](https://img.shields.io/badge/dynamic/json?query=info.requires_python&label=python&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fpip-abandoned%2Fjson)
