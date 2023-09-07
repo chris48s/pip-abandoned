@@ -21,6 +21,7 @@ Some package registries like NPM and Packagist allow a user to mark a package as
 
 - Many packages are linked to a GitHub repository. If that GitHub repository is archived, this is a strong signal that the package itself is abandoned
 - Some packages may use the `Development Status :: 7 - Inactive` trove classifier to indicate the package is not actively maintained
+- Some packages may include a ![not maintained](https://img.shields.io/maintenance/no/2023) badge in the project README to indicate the package is not actively maintained
 
 `pip-abandoned` uses these signals to identify potentially abandoned packages in your environment.
 

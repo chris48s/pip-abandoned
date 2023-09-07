@@ -116,11 +116,16 @@ def get_archived_packages(dist_urls, api_data):
 
 
 def is_inactive(distribution):
-    classifiers = distribution.metadata.get_all("Classifier") or []
+    classifiers = distribution.metadata.get_all("Classifier", [])
     return "Development Status :: 7 - Inactive" in classifiers
 
 
-def output_archived_table(packages):
+def has_maintained_no_badge(distribution):
+    description = distribution.metadata.get("Description", "")
+    return "//img.shields.io/maintenance/no" in description
+
+
+def output_package_repo_table(packages):
     table = Table(show_header=True)
 
     table.add_column("Package")
@@ -132,7 +137,7 @@ def output_archived_table(packages):
     console.print(table)
 
 
-def output_inactive_table(packages):
+def output_package_table(packages):
     table = Table(show_header=True)
 
     table.add_column("Package")
@@ -151,6 +156,7 @@ def search(gh_token, path, verbosity):
         raise Exception(f"Couldn't find any packages in {path}")
 
     inactive_packages = [dist for dist in dists if is_inactive(dist)]
+    unmaintained_packages = [dist for dist in dists if has_maintained_no_badge(dist)]
 
     dist_urls = []
     for distribution in dists:
@@ -158,36 +164,51 @@ def search(gh_token, path, verbosity):
         if url:
             dist_urls.append((distribution, url))
 
+    archived_packages = []
     if len(dist_urls) > 0:
         query = get_graphql_query(dist_urls)
         archived_packages = get_archived_packages(
             dist_urls, query_github_api(gh_token, query)
         )
-    else:
-        archived_packages = []
 
+    console.print("\n")
     if len(inactive_packages) == 0:
         console.print(
-            "No packages with the trove classifier 'Development Status :: 7 - Inactive' were found",
-            style="bold",
+            "[green]✔[/] No packages with the trove classifier [bold white]'Development Status :: 7 - Inactive'[/] were found"
         )
     else:
         console.print(
-            "Packages with the trove classifier 'Development Status :: 7 - Inactive' were found:",
-            style="bold",
+            "[red]✖[/] Packages with the trove classifier [bold white]'Development Status :: 7 - Inactive'[/] were found:"
         )
-        output_inactive_table(inactive_packages)
+        output_package_table(inactive_packages)
+    console.print("\n")
+
+    if len(unmaintained_packages) == 0:
+        console.print(
+            "[green]✔[/] No packages with a [white on black]\x5Bmaintained[/]|[white on red]no][/] badge were found"
+        )
+    else:
+        console.print(
+            "[red]✖[/] Packages with a [white on black]\x5Bmaintained[/]|[white on red]no][/] badge were found:"
+        )
+        output_package_table(unmaintained_packages)
+    console.print("\n")
 
     if len(archived_packages) == 0:
         console.print(
-            "No packages associated with archived GitHub repos were found", style="bold"
+            "[green]✔[/] No packages associated with archived GitHub repos were found"
         )
     else:
         console.print(
-            "Packages associated with archived GitHub repos were found:", style="bold"
+            "[red]✖[/] Packages associated with archived GitHub repos were found:"
         )
-        output_archived_table(archived_packages)
+        output_package_repo_table(archived_packages)
+    console.print("\n")
 
-    if len(inactive_packages) == 0 and len(archived_packages) == 0:
+    if (
+        len(inactive_packages) == 0
+        and len(unmaintained_packages) == 0
+        and len(archived_packages) == 0
+    ):
         return 0
     return 1

@@ -38,6 +38,13 @@ def mock_distributions_inactive():
 
 
 @pytest.fixture
+def mock_distributions_readme():
+    with patch("pip_abandoned.lib.distributions") as mock:
+        mock.return_value = [get_dist_fixture("readme-1.0.0.dist-info")]
+        yield mock
+
+
+@pytest.fixture
 def mock_distributions_homepage():
     with patch("pip_abandoned.lib.distributions") as mock:
         mock.return_value = [get_dist_fixture("home-page-1.0.0.dist-info")]
@@ -52,11 +59,12 @@ def mock_distributions_project_urls():
 
 
 @pytest.fixture
-def mock_distributions_inactive_and_homepage():
+def mock_all_errors():
     with patch("pip_abandoned.lib.distributions") as mock:
         mock.return_value = [
             get_dist_fixture("inactive-1.0.0.dist-info"),
             get_dist_fixture("home-page-1.0.0.dist-info"),
+            get_dist_fixture("readme-1.0.0.dist-info"),
         ]
         yield mock
 
@@ -71,10 +79,25 @@ class TestSearch:
         with StringIO() as buf, redirect_stdout(buf):
             exit_code = lib.search("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
+
         assert (
             "Packages with the trove classifier 'Development Status :: 7 - Inactive' were found"
             in stdout
         )
+        assert "No packages with a [maintained|no] badge were found" in stdout
+        assert "No packages associated with archived GitHub repos were found" in stdout
+        assert exit_code == 1
+
+    def test_unmaintained_badge(self, mock_distributions_readme):
+        with StringIO() as buf, redirect_stdout(buf):
+            exit_code = lib.search("fake_token", "/fake/path", 0)
+            stdout = buf.getvalue()
+
+        assert (
+            "No packages with the trove classifier 'Development Status :: 7 - Inactive' were found"
+            in stdout
+        )
+        assert "Packages with a [maintained|no] badge were found" in stdout
         assert "No packages associated with archived GitHub repos were found" in stdout
         assert exit_code == 1
 
@@ -89,10 +112,12 @@ class TestSearch:
         with StringIO() as buf, redirect_stdout(buf):
             exit_code = lib.search("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
+
         assert (
             "No packages with the trove classifier 'Development Status :: 7 - Inactive' were found"
             in stdout
         )
+        assert "No packages with a [maintained|no] badge were found" in stdout
         assert "Packages associated with archived GitHub repos were found:" in stdout
         assert exit_code == 1
 
@@ -107,10 +132,12 @@ class TestSearch:
         with StringIO() as buf, redirect_stdout(buf):
             exit_code = lib.search("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
+
         assert (
             "No packages with the trove classifier 'Development Status :: 7 - Inactive' were found"
             in stdout
         )
+        assert "No packages with a [maintained|no] badge were found" in stdout
         assert "No packages associated with archived GitHub repos were found" in stdout
         assert exit_code == 0
 
@@ -125,10 +152,12 @@ class TestSearch:
         with StringIO() as buf, redirect_stdout(buf):
             exit_code = lib.search("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
+
         assert (
             "No packages with the trove classifier 'Development Status :: 7 - Inactive' were found"
             in stdout
         )
+        assert "No packages with a [maintained|no] badge were found" in stdout
         assert "Packages associated with archived GitHub repos were found:" in stdout
         assert exit_code == 1
 
@@ -143,15 +172,17 @@ class TestSearch:
         with StringIO() as buf, redirect_stdout(buf):
             exit_code = lib.search("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
+
         assert (
             "No packages with the trove classifier 'Development Status :: 7 - Inactive' were found"
             in stdout
         )
+        assert "No packages with a [maintained|no] badge were found" in stdout
         assert "No packages associated with archived GitHub repos were found" in stdout
         assert exit_code == 0
 
     @responses.activate
-    def test_inactive_and_archived(self, mock_distributions_inactive_and_homepage):
+    def test_all_errors(self, mock_all_errors):
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
@@ -161,10 +192,12 @@ class TestSearch:
         with StringIO() as buf, redirect_stdout(buf):
             exit_code = lib.search("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
+
         assert (
             "Packages with the trove classifier 'Development Status :: 7 - Inactive' were found"
             in stdout
         )
+        assert "Packages with a [maintained|no] badge were found" in stdout
         assert "Packages associated with archived GitHub repos were found:" in stdout
         assert exit_code == 1
 

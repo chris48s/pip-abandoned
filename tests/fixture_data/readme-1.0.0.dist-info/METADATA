@@ -1,0 +1,9 @@
+Metadata-Version: 2.1
+Name: inactive
+Version: 1.0.0
+Description-Content-Type: text/markdown
+# FooBar
+
+![not maintained](https://img.shields.io/maintenance/no/2023)
+
+this package is dead 🪦
