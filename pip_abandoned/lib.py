@@ -35,7 +35,7 @@ def github_repo_url_or_none(url):
         parsed_url = urlparse(url)
         path_parts = [part for part in parsed_url.path.split("/") if part]
         if parsed_url.netloc == "github.com" and len(path_parts) == 2:
-            return url
+            return strip_suffix(url)
     return None
 
 
@@ -46,21 +46,21 @@ def strip_suffix(url):
 
 
 def get_github_repo_url(distribution):
-    urls = []
+    urls = set()
 
-    urls.append(github_repo_url_or_none(distribution.metadata.get("Home-page")))
+    if home_page := github_repo_url_or_none(distribution.metadata.get("Home-page")):
+        urls.add(home_page)
 
     if distribution.metadata.get_all("Project-URL"):
         for classifier in distribution.metadata.get_all("Project-URL"):
             try:
                 _, url = classifier.split(", ")
-                urls.append(github_repo_url_or_none(url))
+                if project_url := github_repo_url_or_none(url):
+                    urls.add(project_url)
             except ValueError:
                 pass
 
-    urls = [u for u in urls if u]  # strip Nones
-    urls = [strip_suffix(u) for u in urls]
-    urls = list(set(urls))  # De-dupe
+    urls = list(urls)
 
     if len(urls) > 1:
         logger.warning(
