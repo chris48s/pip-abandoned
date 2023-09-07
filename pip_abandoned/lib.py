@@ -1,7 +1,7 @@
 import json
 import logging
 import sys
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 import requests
 from rich.console import Console
@@ -35,13 +35,26 @@ def github_repo_url_or_none(url):
         parsed_url = urlparse(url)
         path_parts = [part for part in parsed_url.path.split("/") if part]
         if parsed_url.netloc == "github.com" and len(path_parts) == 2:
-            return strip_suffix(url)
+            return strip_suffixes(
+                urlunparse(
+                    (
+                        parsed_url.scheme,
+                        parsed_url.netloc,
+                        parsed_url.path,
+                        parsed_url.params,
+                        parsed_url.query,
+                        "",  # strip fragment (e.g: #readme) if present
+                    )
+                )
+            )
     return None
 
 
-def strip_suffix(url):
+def strip_suffixes(url):
     if url.endswith(".git"):
         return url[:-4]
+    if url.endswith("/"):
+        return url[:-1]
     return url
 
 
