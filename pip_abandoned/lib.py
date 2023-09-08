@@ -4,6 +4,7 @@ import sys
 from urllib.parse import urlparse, urlunparse
 
 import requests
+from rich import print_json
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.table import Table
@@ -164,7 +165,53 @@ def output_package_table(packages):
     console.print(table)
 
 
-def search(gh_token, path, verbosity):
+def output_console(inactive, unmaintained, archived):
+    console.print("\n")
+    if len(inactive) == 0:
+        console.print(
+            "[green]✔[/] No packages with the trove classifier [bold white]'Development Status :: 7 - Inactive'[/] were found"
+        )
+    else:
+        console.print(
+            "[red]✖[/] Packages with the trove classifier [bold white]'Development Status :: 7 - Inactive'[/] were found:"
+        )
+        output_package_table(inactive)
+    console.print("\n")
+
+    if len(unmaintained) == 0:
+        console.print(
+            "[green]✔[/] No packages with a [white on black bold]\x5Bmaintained[/]|[white on red bold]no][/] badge were found"
+        )
+    else:
+        console.print(
+            "[red]✖[/] Packages with a [white on black bold]\x5Bmaintained[/]|[white on red bold]no][/] badge were found:"
+        )
+        output_package_table(unmaintained)
+    console.print("\n")
+
+    if len(archived) == 0:
+        console.print(
+            "[green]✔[/] No packages associated with archived GitHub repos were found"
+        )
+    else:
+        console.print(
+            "[red]✖[/] Packages associated with archived GitHub repos were found:"
+        )
+        output_package_repo_table(archived)
+    console.print("\n")
+
+
+def output_json(inactive, unmaintained, archived):
+    print_json(
+        data={
+            "inactive": [p.name for p in inactive],
+            "unmaintained": [p.name for p in unmaintained],
+            "archived": [p.name for p, _ in archived],
+        }
+    )
+
+
+def search(gh_token, path, verbosity, format_="text"):
     set_log_level(verbosity)
 
     dists = list(distributions(path=[path]))
@@ -187,39 +234,10 @@ def search(gh_token, path, verbosity):
             dist_urls, query_github_api(gh_token, query)
         )
 
-    console.print("\n")
-    if len(inactive_packages) == 0:
-        console.print(
-            "[green]✔[/] No packages with the trove classifier [bold white]'Development Status :: 7 - Inactive'[/] were found"
-        )
+    if format_ == "json":
+        output_json(inactive_packages, unmaintained_packages, archived_packages)
     else:
-        console.print(
-            "[red]✖[/] Packages with the trove classifier [bold white]'Development Status :: 7 - Inactive'[/] were found:"
-        )
-        output_package_table(inactive_packages)
-    console.print("\n")
-
-    if len(unmaintained_packages) == 0:
-        console.print(
-            "[green]✔[/] No packages with a [white on black]\x5Bmaintained[/]|[white on red]no][/] badge were found"
-        )
-    else:
-        console.print(
-            "[red]✖[/] Packages with a [white on black]\x5Bmaintained[/]|[white on red]no][/] badge were found:"
-        )
-        output_package_table(unmaintained_packages)
-    console.print("\n")
-
-    if len(archived_packages) == 0:
-        console.print(
-            "[green]✔[/] No packages associated with archived GitHub repos were found"
-        )
-    else:
-        console.print(
-            "[red]✖[/] Packages associated with archived GitHub repos were found:"
-        )
-        output_package_repo_table(archived_packages)
-    console.print("\n")
+        output_console(inactive_packages, unmaintained_packages, archived_packages)
 
     if (
         len(inactive_packages) == 0
