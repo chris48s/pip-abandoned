@@ -13,7 +13,10 @@ if sys.version_info < (3, 10):
 else:
     from importlib.metadata import Prepared, distributions
 
-logging.basicConfig(format="%(message)s", handlers=[RichHandler(show_time=False)])
+logging.basicConfig(
+    format="%(message)s",
+    handlers=[RichHandler(show_time=False, console=Console(stderr=True))],
+)
 logger = logging.getLogger(__name__)
 
 console = Console()
