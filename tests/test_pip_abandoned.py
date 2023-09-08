@@ -240,3 +240,32 @@ class TestGetGitHubRepo:
     def test_project_urls_multiple_matches(self):
         dist = get_dist_fixture("multiple-matches-1.0.0.dist-info")
         assert lib.get_github_repo_url(dist) is None
+
+
+class TestGitHubRepoOrNull:
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "https://github.com/chris48s/does-not-exist",
+            "https://github.com/chris48s/does-not-exist/",
+            "https://github.com/chris48s/does-not-exist.git",
+            "https://github.com/chris48s/does-not-exist#readme",
+            "https://github.com/chris48s/does-not-exist/#readme",
+        ],
+    )
+    def test_valid(self, url):
+        assert (
+            lib.github_repo_url_or_none(url)
+            == "https://github.com/chris48s/does-not-exist"
+        )
+
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "https://example.com",
+            "https://github.com/chris48s/does-not-exist/blob/main/README.md",
+            "https://chris48s.github.io/does-not-exist",
+        ],
+    )
+    def test_invalid(self, url):
+        assert lib.github_repo_url_or_none(url) is None
