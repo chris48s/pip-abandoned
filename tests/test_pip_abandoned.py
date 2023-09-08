@@ -1,3 +1,4 @@
+import json
 import sys
 from contextlib import redirect_stdout
 from io import StringIO
@@ -199,6 +200,25 @@ class TestSearch:
         )
         assert "Packages with a [maintained|no] badge were found" in stdout
         assert "Packages associated with archived GitHub repos were found:" in stdout
+        assert exit_code == 1
+
+    @responses.activate
+    def test_json_output(self, mock_all_errors):
+        responses.add(
+            responses.POST,
+            "https://api.github.com/graphql",
+            json={"data": {"home_page": {"isArchived": True}}},
+            status=200,
+        )
+        with StringIO() as buf, redirect_stdout(buf):
+            exit_code = lib.search("fake_token", "/fake/path", 0, "json")
+            stdout = buf.getvalue()
+
+        assert json.loads(stdout) == {
+            "inactive": ["inactive"],
+            "unmaintained": ["readme"],
+            "archived": ["home-page"],
+        }
         assert exit_code == 1
 
 
