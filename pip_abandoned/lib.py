@@ -1,8 +1,10 @@
 import json
 import logging
+import os
 import sys
 from urllib.parse import urlparse, urlunparse
 
+import keyring
 import requests
 from rich import print_json
 from rich.console import Console
@@ -21,6 +23,32 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 console = Console()
+
+
+def get_token():
+    if gh_token := os.environ.get("GH_TOKEN"):
+        return gh_token
+    if gh_token := keyring.get_password("pip-abandoned", "gh_token"):
+        return gh_token
+    raise Exception(
+        "No GitHub token supplied.\n"
+        "Provide one via the GH_TOKEN environment variable or set one by running\n"
+        "pip-abandoned set-token\n"
+        "See "
+        "https://github.com/chris48s/pip-abandoned#authentication"
+        "\nfor more info."
+    )
+
+
+def set_token():
+    console.print(
+        "In order to efficiently query the GitHub API, a GitHub API token is required. "
+        "A Personal Access Token with read-only access to public repos will be sufficient for most cases. "
+        "Your token will be stored using the system keyring service.\n"
+    )
+    gh_token = input("GitHub API token: ")
+    keyring.set_password("pip-abandoned", "gh_token", gh_token)
+    return 0
 
 
 def set_log_level(verbosity):

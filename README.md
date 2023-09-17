@@ -25,18 +25,20 @@ Some package registries like NPM and Packagist allow a user to mark a package as
 
 `pip-abandoned` uses these signals to identify potentially abandoned packages in your environment.
 
+## Authentication
+
+`pip-abandoned` used the GitHub GraphQL API to efficiently query many repos at once. The advantage of this is that it is fast. The tradeoff is that authentication is required. A PAT with read-only access to public repos will be sufficient for most cases. There are two ways we can provide an auth token:
+
+- Via an environment variable called `GH_TOKEN` e.g: `GH_TOKEN=ghp_abc123`
+- Run `pip-abandoned set-token` to store a token using the system keyring service
+
 ## Usage
 
 An example invocation of `pip-abandoned` looks like:
 
 ```bash
-GH_TOKEN=ghp_abc123 pip-abandoned /home/alice/.virtualenvs/myproject/lib/python3.10/site-packages
+pip-abandoned search /home/alice/.virtualenvs/myproject/lib/python3.10/site-packages
 ```
-
-There are two things we need to supply:
-
-- A path to a python (virtual) environment to search. This is passed as a positional parameter.
-- A GitHub API token. This is set using an environment variable called `GH_TOKEN`. We need to provide this because `pip-abandoned` used the GitHub GraphQL API to efficiently query many repos at once. The advantage of this is that it is fast. The tradeoff is that authentication is required. A PAT with read-only access to public repos will be sufficient for most cases.
 
 ## Inspiration
 
