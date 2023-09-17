@@ -30,7 +30,7 @@ Some package registries like NPM and Packagist allow a user to mark a package as
 `pip-abandoned` used the GitHub GraphQL API to efficiently query many repos at once. The advantage of this is that it is fast. The tradeoff is that authentication is required. A PAT with read-only access to public repos will be sufficient for most cases. There are two ways we can provide an auth token:
 
 - Via an environment variable called `GH_TOKEN` e.g: `GH_TOKEN=ghp_abc123`
-- Run `pip-abandoned set-token` to store a token using the system keyring service
+- Run `pip-abandoned set-token` to store a token using the system keyring service with [keyring](https://pypi.org/project/keyring/)
 
 ## Usage
 
