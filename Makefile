@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-.PHONY: build help format install lint test release venv
+.PHONY: help build format install lint test release venv
 
 help:
 	@grep '^\.PHONY' Makefile | cut -d' ' -f2- | tr ' ' '\n'
