@@ -1,6 +1,7 @@
 import argparse
 import os
 
+from .__version__ import __version__
 from .lib import search
 
 
@@ -25,6 +26,9 @@ def cli():
         choices=["text", "json"],
         default="text",
         help="Output format",
+    )
+    parser.add_argument(
+        "--version", action="version", version=f"%(prog)s {__version__}"
     )
     args = parser.parse_args()
 
