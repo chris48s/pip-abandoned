@@ -1,6 +1,6 @@
 # Changelog
 
-## 📦 unreleased
+## 📦 0.3.0
 
 * **Breaking:** Add sub-commands.
   This changes the search command from `pip-abandoned <path>` to `pip-abandoned search <path>`
