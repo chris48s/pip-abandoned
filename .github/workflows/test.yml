@@ -17,3 +17,5 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           pre-install: flit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
