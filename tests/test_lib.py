@@ -87,7 +87,7 @@ class TestSearch:
         )
         assert "No packages with a [maintained|no] badge were found" in stdout
         assert "No packages associated with archived GitHub repos were found" in stdout
-        assert exit_code == 1
+        assert exit_code == 9
 
     def test_unmaintained_badge(self, mock_distributions_readme):
         with StringIO() as buf, redirect_stdout(buf):
@@ -100,7 +100,7 @@ class TestSearch:
         )
         assert "Packages with a [maintained|no] badge were found" in stdout
         assert "No packages associated with archived GitHub repos were found" in stdout
-        assert exit_code == 1
+        assert exit_code == 9
 
     @responses.activate
     def test_home_page_archived(self, mock_distributions_homepage):
@@ -120,7 +120,7 @@ class TestSearch:
         )
         assert "No packages with a [maintained|no] badge were found" in stdout
         assert "Packages associated with archived GitHub repos were found:" in stdout
-        assert exit_code == 1
+        assert exit_code == 9
 
     @responses.activate
     def test_home_page_not_archived(self, mock_distributions_homepage):
@@ -160,7 +160,7 @@ class TestSearch:
         )
         assert "No packages with a [maintained|no] badge were found" in stdout
         assert "Packages associated with archived GitHub repos were found:" in stdout
-        assert exit_code == 1
+        assert exit_code == 9
 
     @responses.activate
     def test_project_urls_not_archived(self, mock_distributions_project_urls):
@@ -200,7 +200,7 @@ class TestSearch:
         )
         assert "Packages with a [maintained|no] badge were found" in stdout
         assert "Packages associated with archived GitHub repos were found:" in stdout
-        assert exit_code == 1
+        assert exit_code == 9
 
     @responses.activate
     def test_json_output(self, mock_all_errors):
@@ -219,7 +219,7 @@ class TestSearch:
             "unmaintained": ["readme"],
             "archived": ["home-page"],
         }
-        assert exit_code == 1
+        assert exit_code == 9
 
 
 class TestGetGitHubRepo:

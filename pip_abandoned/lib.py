@@ -273,4 +273,4 @@ def search(gh_token, path, verbosity, format_="text"):
         and len(archived_packages) == 0
     ):
         return 0
-    return 1
+    return 9

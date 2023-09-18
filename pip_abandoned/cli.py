@@ -4,7 +4,7 @@ from . import lib
 from .__version__ import __version__
 
 
-def cli():
+def get_parser():
     parser = argparse.ArgumentParser(
         description="Search for abandoned and deprecated python packages"
     )
@@ -40,6 +40,12 @@ def cli():
     set_token = subparsers.add_parser(  # noqa: F841
         "set-token", help="Set a GitHub API token"
     )
+
+    return parser
+
+
+def cli():
+    parser = get_parser()
 
     args = parser.parse_args()
 

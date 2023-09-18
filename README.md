@@ -40,6 +40,16 @@ An example invocation of `pip-abandoned` looks like:
 pip-abandoned search /home/alice/.virtualenvs/myproject/lib/python3.10/site-packages
 ```
 
+## Exit Codes
+
+`pip-abandoned search` exits with
+
+- code `0` if no inactive, archived or unmaintained packages were found
+- code `1` if an error was encountered. For example:
+  - no packages were supplied in the path provided or
+  - no auth token was supplied
+- code `9` if one or more inactive, archived or unmaintained packages were found
+
 ## Inspiration
 
 `pip-abandoned` takes inspiration from [pip-audit](https://github.com/pypa/pip-audit), another great project.
