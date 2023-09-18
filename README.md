@@ -27,7 +27,7 @@ Some package registries like NPM and Packagist allow a user to mark a package as
 
 ## Authentication
 
-`pip-abandoned` used the GitHub GraphQL API to efficiently query many repos at once. The advantage of this is that it is fast. The tradeoff is that authentication is required. A PAT with read-only access to public repos will be sufficient for most cases. There are two ways we can provide an auth token:
+`pip-abandoned` uses the GitHub GraphQL API to efficiently query many repos at once. The advantage of this is that it is fast. The tradeoff is that authentication is required. A PAT with read-only access to public repos will be sufficient for most cases. There are two ways we can provide an auth token:
 
 - Via an environment variable called `GH_TOKEN` e.g: `GH_TOKEN=ghp_abc123`
 - Run `pip-abandoned set-token` to store a token using the system keyring service with [keyring](https://pypi.org/project/keyring/)
@@ -44,11 +44,11 @@ pip-abandoned search /home/alice/.virtualenvs/myproject/lib/python3.10/site-pack
 
 `pip-abandoned search` exits with
 
-- code `0` if no inactive, archived or unmaintained packages were found
-- code `1` if an error was encountered. For example:
+- code `0` when no inactive, archived or unmaintained packages were found
+- code `1` when an error was encountered. For example:
   - no packages were supplied in the path provided or
   - no auth token was supplied
-- code `9` if one or more inactive, archived or unmaintained packages were found
+- code `9` when one or more inactive, archived or unmaintained packages were found
 
 ## Inspiration
 

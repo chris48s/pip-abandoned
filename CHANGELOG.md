@@ -4,7 +4,7 @@
 
 * **Breaking:** Add sub-commands.
   This changes the search command from `pip-abandoned <path>` to `pip-abandoned search <path>`
-* **Breaking:** The exit code if one or more abandoned packages around found is now `9`
+* **Breaking:** The exit code if one or more abandoned packages are found is now `9`
 * Add `set-token` command, allowing GitHub token to be stored in the system keyring
 * Add `--version` flag
 
