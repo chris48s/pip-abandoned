@@ -9,7 +9,7 @@ venv:
 
 format:
 	source .venv/bin/activate && \
-	isort --profile black . && \
+	isort . && \
 	black .
 
 install:
@@ -19,7 +19,7 @@ install:
 
 lint:
 	source .venv/bin/activate && \
-	isort --profile black -c --diff . && \
+	isort -c --diff . && \
 	black --check . && \
 	flake8 .
 
