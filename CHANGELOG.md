@@ -1,5 +1,9 @@
 # Changelog
 
+## 📦 0.3.1
+
+* Tested on python 3.12
+
 ## 📦 0.3.0
 
 * **Breaking:** Add sub-commands.
