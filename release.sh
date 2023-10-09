@@ -52,10 +52,6 @@ git commit -m "version $VERSION"
 # tag
 git tag "$VERSION"
 
-# build and push to PyPI
-flit build
-flit publish
-
 # push to GitHub
 git push origin "$(git branch --show-current)" --tags
 
