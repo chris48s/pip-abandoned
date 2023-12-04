@@ -70,15 +70,15 @@ def mock_all_errors():
         yield mock
 
 
-class TestSearch:
+class TestSearchVirtualenv:
     def test_no_packages(self, mock_distributions_no_packages):
         with pytest.raises(Exception) as exc:
-            lib.search("fake_token", "/fake/path", 0)
+            lib.search_virtualenv_path("fake_token", "/fake/path", 0)
         assert "Couldn't find any packages in /fake/path" in str(exc)
 
     def test_inactive(self, mock_distributions_inactive):
         with StringIO() as buf, redirect_stdout(buf):
-            exit_code = lib.search("fake_token", "/fake/path", 0)
+            exit_code = lib.search_virtualenv_path("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
 
         assert (
@@ -91,7 +91,7 @@ class TestSearch:
 
     def test_unmaintained_badge(self, mock_distributions_readme):
         with StringIO() as buf, redirect_stdout(buf):
-            exit_code = lib.search("fake_token", "/fake/path", 0)
+            exit_code = lib.search_virtualenv_path("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
 
         assert (
@@ -111,7 +111,7 @@ class TestSearch:
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
-            exit_code = lib.search("fake_token", "/fake/path", 0)
+            exit_code = lib.search_virtualenv_path("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
 
         assert (
@@ -131,7 +131,7 @@ class TestSearch:
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
-            exit_code = lib.search("fake_token", "/fake/path", 0)
+            exit_code = lib.search_virtualenv_path("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
 
         assert (
@@ -151,7 +151,7 @@ class TestSearch:
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
-            exit_code = lib.search("fake_token", "/fake/path", 0)
+            exit_code = lib.search_virtualenv_path("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
 
         assert (
@@ -171,7 +171,7 @@ class TestSearch:
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
-            exit_code = lib.search("fake_token", "/fake/path", 0)
+            exit_code = lib.search_virtualenv_path("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
 
         assert (
@@ -191,7 +191,7 @@ class TestSearch:
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
-            exit_code = lib.search("fake_token", "/fake/path", 0)
+            exit_code = lib.search_virtualenv_path("fake_token", "/fake/path", 0)
             stdout = buf.getvalue()
 
         assert (
@@ -211,7 +211,9 @@ class TestSearch:
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
-            exit_code = lib.search("fake_token", "/fake/path", 0, "json")
+            exit_code = lib.search_virtualenv_path(
+                "fake_token", "/fake/path", 0, "json"
+            )
             stdout = buf.getvalue()
 
         assert json.loads(stdout) == {

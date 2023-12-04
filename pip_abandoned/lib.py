@@ -1,7 +1,11 @@
 import json
 import logging
 import os
+import subprocess
 import sys
+import venv
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from urllib.parse import urlparse, urlunparse
 
 import keyring
@@ -60,6 +64,25 @@ def set_log_level(verbosity):
         logger.setLevel(logging.INFO)
     elif verbosity >= 3:
         logger.setLevel(logging.DEBUG)
+
+
+def get_python_version():
+    return f"python{sys.version_info.major}.{sys.version_info.minor}"
+
+
+def create_temp_virtualenv(directory):
+    builder = venv.EnvBuilder(
+        system_site_packages=False,
+        clear=True,
+        symlinks=False,
+        upgrade=False,
+        with_pip=True,
+    )
+    builder.create(directory)
+
+    site_packages = Path(directory) / "lib" / get_python_version() / "site-packages"
+
+    return site_packages
 
 
 def github_repo_url_or_none(url):
@@ -239,7 +262,7 @@ def output_json(inactive, unmaintained, archived):
     )
 
 
-def search(gh_token, path, verbosity, format_="text"):
+def search_virtualenv_path(gh_token, path, verbosity, format_="text"):
     set_log_level(verbosity)
 
     dists = list(distributions(path=[path]))
@@ -274,3 +297,17 @@ def search(gh_token, path, verbosity, format_="text"):
     ):
         return 0
     return 9
+
+
+def search_requirements_files(gh_token, requirements, verbosity, format_="text"):
+    with TemporaryDirectory() as tempdir:
+        site_packages = create_temp_virtualenv(tempdir)
+
+        command = [Path(tempdir) / "bin" / "pip", "install"]
+        for reqs in requirements:
+            command.append("-r")
+            command.append(reqs.absolute())
+
+        subprocess.run(command, capture_output=True)
+
+        return search_virtualenv_path(gh_token, site_packages, verbosity, format_)
