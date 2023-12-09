@@ -1,4 +1,5 @@
 import argparse
+import textwrap
 from pathlib import Path
 
 from . import lib
@@ -7,7 +8,7 @@ from .__version__ import __version__
 
 def get_parser():
     parser = argparse.ArgumentParser(
-        description="Search for abandoned and deprecated python packages"
+        description="Search for abandoned and deprecated python packages",
     )
     parser.add_argument(
         "--version", action="version", version=f"%(prog)s {__version__}"
@@ -17,7 +18,16 @@ def get_parser():
     )
 
     search = subparsers.add_parser(
-        "search", help="Search for abandoned and deprecated python packages"
+        "search",
+        help="Search for abandoned and deprecated python packages",
+        epilog=textwrap.dedent(
+            """\
+            Examples:
+            pip-abandoned search myproject/lib/python3.10/site-packages
+            pip-abandoned search -r requirements.txt
+        """
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
     dep_source_args = search.add_mutually_exclusive_group()
