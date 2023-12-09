@@ -1,11 +1,10 @@
 import re
 import subprocess
-import sys
-import venv
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from pip_abandoned.cli import get_parser
+from pip_abandoned.lib import create_temp_virtualenv
 
 """
 Tests in this file call out to real services (PyPI, GitHub) without mocking
@@ -15,8 +14,8 @@ This means:
 """
 
 
-def get_python_version():
-    return f"python{sys.version_info.major}.{sys.version_info.minor}"
+def get_requirements_fixture(name):
+    return Path(".") / "tests" / "fixture_data" / name
 
 
 def test_help():
@@ -33,36 +32,18 @@ def test_version():
     assert re.match(r"pip-abandoned \d+.\d+.\d+", result.stdout.decode("utf-8").strip())
 
 
-def test_search_pass():
+def test_search_virtualenv_path_pass():
     with TemporaryDirectory() as tempdir:
-        # create a temp virtualenv
-        builder = venv.EnvBuilder(
-            system_site_packages=False,
-            clear=True,
-            symlinks=False,
-            upgrade=False,
-            with_pip=True,
-        )
-        builder.create(tempdir)
-
-        site_packages = Path(tempdir) / "lib" / get_python_version() / "site-packages"
+        site_packages = create_temp_virtualenv(tempdir)
         result = subprocess.run(
             ["pip-abandoned", "search", site_packages], capture_output=True
         )
         assert result.returncode == 0
 
 
-def test_search_fail():
+def test_search_virtualenv_path_fail():
     with TemporaryDirectory() as tempdir:
-        # create a temp virtualenv
-        builder = venv.EnvBuilder(
-            system_site_packages=False,
-            clear=True,
-            symlinks=False,
-            upgrade=False,
-            with_pip=True,
-        )
-        builder.create(tempdir)
+        site_packages = create_temp_virtualenv(tempdir)
 
         # install a known abandoned package into the env
         subprocess.run(
@@ -70,7 +51,6 @@ def test_search_fail():
             capture_output=True,
         )
 
-        site_packages = Path(tempdir) / "lib" / get_python_version() / "site-packages"
         result = subprocess.run(
             ["pip-abandoned", "search", site_packages], capture_output=True
         )
@@ -79,3 +59,39 @@ def test_search_fail():
             in result.stdout
         )
         assert result.returncode == 9
+
+
+def test_search_requirements_files_pass():
+    result = subprocess.run(
+        ["pip-abandoned", "search", "-r", get_requirements_fixture("reqs-pass.txt")],
+        capture_output=True,
+    )
+    assert result.returncode == 0
+
+
+def test_search_requirements_files_fail():
+    result = subprocess.run(
+        ["pip-abandoned", "search", "-r", get_requirements_fixture("reqs-fail.txt")],
+        capture_output=True,
+    )
+    assert (
+        b"Packages associated with archived GitHub repos were found:" in result.stdout
+    )
+    assert result.returncode == 9
+
+
+def test_search_requirements_files_multiple_files():
+    result = subprocess.run(
+        [
+            "pip-abandoned",
+            "search",
+            "-r",
+            get_requirements_fixture("reqs-pass.txt"),
+            "-r",
+            get_requirements_fixture("reqs-fail.txt"),
+            "-vv",
+        ],
+        capture_output=True,
+    )
+    assert b"django" in result.stderr
+    assert b"commonmark" in result.stderr

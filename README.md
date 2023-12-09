@@ -34,11 +34,17 @@ Some package registries like NPM and Packagist allow a user to mark a package as
 
 ## Usage
 
-An example invocation of `pip-abandoned` looks like:
-
 ```bash
+# Search a virtualenv path:
 pip-abandoned search /home/alice/.virtualenvs/myproject/lib/python3.10/site-packages
 ```
+
+```bash
+# Search a requirements file:
+pip-abandoned search -r /path/to/requirements.txt
+```
+
+When searching one or more requirements files, your packages will be installed into a temporary virtualenv. This means this search will include transitive dependencies.
 
 ## Exit Codes
 

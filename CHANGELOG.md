@@ -1,5 +1,10 @@
 # Changelog
 
+## 📦 0.4.0
+
+* Add ability to search a requirements file.
+  It is now possible to invoke `pip-abandoned search -r requirements.txt`
+
 ## 📦 0.3.2
 
 * Tested on python 3.12
