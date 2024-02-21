@@ -107,7 +107,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"home_page": {"isArchived": True}}},
+            json={"data": {"_home_page": {"isArchived": True}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
@@ -127,7 +127,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"home_page": {"isArchived": False}}},
+            json={"data": {"_home_page": {"isArchived": False}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
@@ -147,7 +147,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"project_urls": {"isArchived": True}}},
+            json={"data": {"_project_urls": {"isArchived": True}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
@@ -167,7 +167,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"project_urls_": {"isArchived": False}}},
+            json={"data": {"_project_urls": {"isArchived": False}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
@@ -187,7 +187,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"home_page": {"isArchived": True}}},
+            json={"data": {"_home_page": {"isArchived": True}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
@@ -207,7 +207,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"home_page": {"isArchived": True}}},
+            json={"data": {"_home_page": {"isArchived": True}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):

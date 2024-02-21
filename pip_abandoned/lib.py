@@ -139,11 +139,15 @@ def get_github_repo_url(distribution):
     return None
 
 
+def normalize_name(name):
+    return f"_{Prepared.normalize(name)}"
+
+
 def get_graphql_query(dist_urls):
     query = "query {\n"
     for dist, repo in dist_urls:
         owner, name = [part for part in urlparse(repo).path.split("/") if part]
-        slug = Prepared.normalize(dist.name)
+        slug = normalize_name(dist.name)
         query += (
             f'  {slug}: repository(owner: "{owner}", name: "{name}") {{ isArchived }}\n'
         )
@@ -179,7 +183,7 @@ def get_archived_packages(dist_urls, api_data):
     return [
         (dist, repo)
         for dist, repo in dist_urls
-        if Prepared.normalize(dist.name) in archived_packages_normalized_names
+        if normalize_name(dist.name) in archived_packages_normalized_names
     ]
 
 
