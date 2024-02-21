@@ -20,6 +20,9 @@ if sys.version_info < (3, 10):
 else:
     from importlib.metadata import Prepared, distributions
 
+# Number of GitHub repos to query in a single API request
+CHUNK_SIZE = 200
+
 logging.basicConfig(
     format="%(message)s",
     handlers=[RichHandler(show_time=False, console=Console(stderr=True))],
@@ -155,6 +158,14 @@ def get_graphql_query(dist_urls):
     return query
 
 
+def get_graphql_queries(dist_urls):
+    queries = []
+    for i in range(0, len(dist_urls), CHUNK_SIZE):
+        chunk = dist_urls[i : i + CHUNK_SIZE]
+        queries.append(get_graphql_query(chunk))
+    return queries
+
+
 def query_github_api(gh_token, query):
     logger.info(f"Querying GitHub API:\n{query}")
 
@@ -284,10 +295,13 @@ def search_virtualenv_path(gh_token, path, verbosity, format_="text"):
 
     archived_packages = []
     if len(dist_urls) > 0:
-        query = get_graphql_query(dist_urls)
-        archived_packages = get_archived_packages(
-            dist_urls, query_github_api(gh_token, query)
-        )
+        queries = get_graphql_queries(dist_urls)
+        results = [query_github_api(gh_token, query) for query in queries]
+        merged = {}
+        for dct in results:
+            merged.update(dct)
+
+        archived_packages = get_archived_packages(dist_urls, merged)
 
     if format_ == "json":
         output_json(inactive_packages, unmaintained_packages, archived_packages)
