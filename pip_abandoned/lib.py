@@ -21,7 +21,7 @@ else:
     from importlib.metadata import Prepared, distributions
 
 # Number of GitHub repos to query in a single API request
-CHUNK_SIZE = 200
+DEFAULT_CHUNK_SIZE = 200
 
 logging.basicConfig(
     format="%(message)s",
@@ -158,12 +158,22 @@ def get_graphql_query(dist_urls):
     return query
 
 
-def get_graphql_queries(dist_urls):
+def get_graphql_queries(dist_urls, chunk_size=None):
+    if chunk_size is None:
+        chunk_size = DEFAULT_CHUNK_SIZE
     queries = []
-    for i in range(0, len(dist_urls), CHUNK_SIZE):
-        chunk = dist_urls[i : i + CHUNK_SIZE]
+    for i in range(0, len(dist_urls), chunk_size):
+        chunk = dist_urls[i : i + chunk_size]
         queries.append(get_graphql_query(chunk))
     return queries
+
+
+def merge_results(results):
+    # merge an array of dicts into a single dict
+    merged = {}
+    for dct in results:
+        merged.update(dct)
+    return merged
 
 
 def query_github_api(gh_token, query):
@@ -296,12 +306,10 @@ def search_virtualenv_path(gh_token, path, verbosity, format_="text"):
     archived_packages = []
     if len(dist_urls) > 0:
         queries = get_graphql_queries(dist_urls)
-        results = [query_github_api(gh_token, query) for query in queries]
-        merged = {}
-        for dct in results:
-            merged.update(dct)
-
-        archived_packages = get_archived_packages(dist_urls, merged)
+        results = merge_results(
+            [query_github_api(gh_token, query) for query in queries]
+        )
+        archived_packages = get_archived_packages(dist_urls, results)
 
     if format_ == "json":
         output_json(inactive_packages, unmaintained_packages, archived_packages)
