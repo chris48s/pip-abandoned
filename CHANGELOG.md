@@ -1,5 +1,10 @@
 # Changelog
 
+## 📦 0.4.1
+
+* Bugfix: Ensure GraphQL aliases are valid
+* Query GitHub API in batches of 200 repos at a time
+
 ## 📦 0.4.0
 
 * Add ability to search a requirements file.
