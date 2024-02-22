@@ -3,6 +3,7 @@ import sys
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import pytest
@@ -107,7 +108,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"home_page": {"isArchived": True}}},
+            json={"data": {"_home_page": {"isArchived": True}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
@@ -127,7 +128,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"home_page": {"isArchived": False}}},
+            json={"data": {"_home_page": {"isArchived": False}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
@@ -147,7 +148,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"project_urls": {"isArchived": True}}},
+            json={"data": {"_project_urls": {"isArchived": True}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
@@ -167,7 +168,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"project_urls_": {"isArchived": False}}},
+            json={"data": {"_project_urls": {"isArchived": False}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
@@ -187,7 +188,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"home_page": {"isArchived": True}}},
+            json={"data": {"_home_page": {"isArchived": True}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
@@ -207,7 +208,7 @@ class TestSearchVirtualenv:
         responses.add(
             responses.POST,
             "https://api.github.com/graphql",
-            json={"data": {"home_page": {"isArchived": True}}},
+            json={"data": {"_home_page": {"isArchived": True}}},
             status=200,
         )
         with StringIO() as buf, redirect_stdout(buf):
@@ -271,3 +272,78 @@ class TestGitHubRepoOrNull:
     )
     def test_invalid(self, url):
         assert lib.github_repo_url_or_none(url) is None
+
+
+class TestGetGraphqlQueries:
+    @property
+    def dist_urls(self):
+        return [
+            (
+                SimpleNamespace(name="Spoon-Knife1"),
+                "https://github.com/octocat/Spoon-Knife1",
+            ),
+            (
+                SimpleNamespace(name="Spoon-Knife2"),
+                "https://github.com/octocat/Spoon-Knife2",
+            ),
+            (
+                SimpleNamespace(name="Spoon-Knife3"),
+                "https://github.com/octocat/Spoon-Knife3",
+            ),
+            (
+                SimpleNamespace(name="Spoon-Knife4"),
+                "https://github.com/octocat/Spoon-Knife4",
+            ),
+            (
+                SimpleNamespace(name="Spoon-Knife5"),
+                "https://github.com/octocat/Spoon-Knife5",
+            ),
+        ]
+
+    def test_get_graphql_queries_multiple_pages(self):
+        chunk_size = 2  # 2 repos per query
+        queries = lib.get_graphql_queries(self.dist_urls, chunk_size)
+
+        assert len(queries) == 3
+
+        assert "_spoon_knife1" in queries[0]
+        assert "_spoon_knife1" not in queries[1]
+        assert "_spoon_knife1" not in queries[2]
+
+        assert "_spoon_knife2" in queries[0]
+        assert "_spoon_knife2" not in queries[1]
+        assert "_spoon_knife2" not in queries[2]
+
+        assert "_spoon_knife3" not in queries[0]
+        assert "_spoon_knife3" in queries[1]
+        assert "_spoon_knife3" not in queries[2]
+
+        assert "_spoon_knife4" not in queries[0]
+        assert "_spoon_knife4" in queries[1]
+        assert "_spoon_knife4" not in queries[2]
+
+        assert "_spoon_knife5" not in queries[0]
+        assert "_spoon_knife5" not in queries[1]
+        assert "_spoon_knife5" in queries[2]
+
+    def test_get_graphql_queries_one_page(self):
+        queries = lib.get_graphql_queries(self.dist_urls)
+
+        assert len(queries) == 1
+
+        assert "_spoon_knife1" in queries[0]
+        assert "_spoon_knife2" in queries[0]
+        assert "_spoon_knife3" in queries[0]
+        assert "_spoon_knife4" in queries[0]
+        assert "_spoon_knife5" in queries[0]
+
+
+def test_merge_results():
+    input_ = [{"a": 1, "b": 2}, {"c": 3, "d": 4}]
+    expected = {
+        "a": 1,
+        "b": 2,
+        "c": 3,
+        "d": 4,
+    }
+    assert lib.merge_results(input_) == expected

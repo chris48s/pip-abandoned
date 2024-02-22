@@ -20,6 +20,9 @@ if sys.version_info < (3, 10):
 else:
     from importlib.metadata import Prepared, distributions
 
+# Number of GitHub repos to query in a single API request
+DEFAULT_CHUNK_SIZE = 200
+
 logging.basicConfig(
     format="%(message)s",
     handlers=[RichHandler(show_time=False, console=Console(stderr=True))],
@@ -139,16 +142,38 @@ def get_github_repo_url(distribution):
     return None
 
 
+def normalize_name(name):
+    return f"_{Prepared.normalize(name)}"
+
+
 def get_graphql_query(dist_urls):
     query = "query {\n"
     for dist, repo in dist_urls:
         owner, name = [part for part in urlparse(repo).path.split("/") if part]
-        slug = Prepared.normalize(dist.name)
+        slug = normalize_name(dist.name)
         query += (
             f'  {slug}: repository(owner: "{owner}", name: "{name}") {{ isArchived }}\n'
         )
     query += "}"
     return query
+
+
+def get_graphql_queries(dist_urls, chunk_size=None):
+    if chunk_size is None:
+        chunk_size = DEFAULT_CHUNK_SIZE
+    queries = []
+    for i in range(0, len(dist_urls), chunk_size):
+        chunk = dist_urls[i : i + chunk_size]
+        queries.append(get_graphql_query(chunk))
+    return queries
+
+
+def merge_results(results):
+    # merge an array of dicts into a single dict
+    merged = {}
+    for dct in results:
+        merged.update(dct)
+    return merged
 
 
 def query_github_api(gh_token, query):
@@ -179,7 +204,7 @@ def get_archived_packages(dist_urls, api_data):
     return [
         (dist, repo)
         for dist, repo in dist_urls
-        if Prepared.normalize(dist.name) in archived_packages_normalized_names
+        if normalize_name(dist.name) in archived_packages_normalized_names
     ]
 
 
@@ -280,10 +305,11 @@ def search_virtualenv_path(gh_token, path, verbosity, format_="text"):
 
     archived_packages = []
     if len(dist_urls) > 0:
-        query = get_graphql_query(dist_urls)
-        archived_packages = get_archived_packages(
-            dist_urls, query_github_api(gh_token, query)
+        queries = get_graphql_queries(dist_urls)
+        results = merge_results(
+            [query_github_api(gh_token, query) for query in queries]
         )
+        archived_packages = get_archived_packages(dist_urls, results)
 
     if format_ == "json":
         output_json(inactive_packages, unmaintained_packages, archived_packages)
