@@ -19,3 +19,11 @@ jobs:
           pre-install: flit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  write-badges:
+    needs: build
+    uses: chris48s/python-package-shared/.github/workflows/write-badges-pep621.yml@main
+    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
+    with:
+      build_result: ${{ needs.build.result }}
+      package_dir: 'pip_abandoned'
