@@ -4,6 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "pip-abandoned"
+version = "0.4.2"
 authors = [{name = "chris48s", email = "git@chris-shaw.dev"}]
 description = "Search for abandoned and deprecated python packages"
 readme = "README.md"
@@ -19,7 +20,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-dynamic = ["version"]
 requires-python = ">=3.8"
 dependencies = [
     "keyring>=19",
@@ -37,6 +37,7 @@ dev = [
     "pytest==8.3.3",
     "pytest-cov==5.0.0",
     "responses==0.25.3",
+    "tomlkit==0.13.0",
 ]
 
 [project.urls]
