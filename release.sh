@@ -32,7 +32,7 @@ then
 fi
 
 # confirm
-read -r -p "Bump version from $(cut -d '"' -f2 < pip_abandoned/__version__.py) to $VERSION. Are you sure? [y/n] " response
+read -r -p "Bump version from $(python version.py show) to $VERSION. Are you sure? [y/n] " response
 response=${response,,}  # tolower
 if [[ ! "$response" =~ ^(yes|y)$ ]]; then
     exit 1
@@ -41,11 +41,10 @@ fi
 # checks done, now publish the release...
 
 # bump version
-echo '__version__ = "'"$VERSION"'"' > pip_abandoned/__version__.py
+python version.py bump "$VERSION"
 
 # commit
 git add pyproject.toml
-git add pip_abandoned/__version__.py
 git add CHANGELOG.md
 git commit -m "version $VERSION"
 
