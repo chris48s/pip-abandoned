@@ -7,9 +7,8 @@ name = "pip-abandoned"
 authors = [{name = "chris48s", email = "git@chris-shaw.dev"}]
 description = "Search for abandoned and deprecated python packages"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "MIT"
 classifiers = [
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
@@ -30,7 +29,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "flit==3.10.1",
+    "flit==3.11.0",
     "isort==5.13.2",
     "flake8==7.1.1",
     "black==24.8.0",
