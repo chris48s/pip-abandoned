@@ -7,7 +7,7 @@ name = "pip-abandoned"
 authors = [{name = "chris48s", email = "git@chris-shaw.dev"}]
 description = "Search for abandoned and deprecated python packages"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "MIT"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
