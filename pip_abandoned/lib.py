@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 import venv
+from importlib.metadata import Prepared, distributions
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from urllib.parse import urlparse, urlunparse
@@ -14,11 +15,6 @@ from rich import print_json
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.table import Table
-
-if sys.version_info < (3, 10):
-    from importlib_metadata import Prepared, distributions
-else:
-    from importlib.metadata import Prepared, distributions
 
 # Number of GitHub repos to query in a single API request
 DEFAULT_CHUNK_SIZE = 200

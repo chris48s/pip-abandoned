@@ -8,23 +8,12 @@ authors = [{name = "chris48s", email = "git@chris-shaw.dev"}]
 description = "Search for abandoned and deprecated python packages"
 readme = "README.md"
 license = "MIT"
-classifiers = [
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-]
 dynamic = ["version"]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
     "keyring>=19",
     "requests>=2,<3",
     "rich>=12",
-    "importlib-metadata>=4.6; python_version < '3.10'",
 ]
 
 [project.optional-dependencies]
