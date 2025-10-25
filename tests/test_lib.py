@@ -1,6 +1,6 @@
 import json
-import sys
 from contextlib import redirect_stdout
+from importlib.metadata import Distribution
 from io import StringIO
 from pathlib import Path
 from types import SimpleNamespace
@@ -11,11 +11,6 @@ import responses
 from rich.console import Console
 
 from pip_abandoned import lib
-
-if sys.version_info < (3, 10):
-    from importlib_metadata import Distribution
-else:
-    from importlib.metadata import Distribution
 
 # Disable Rich formatting so we can more easily make assertions about text output
 lib.console = Console(force_terminal=True, _environ={"TERM": "dumb"}, soft_wrap=True)
