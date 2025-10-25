@@ -252,11 +252,11 @@ def output_console(inactive, unmaintained, archived):
 
     if len(unmaintained) == 0:
         console.print(
-            "[green]✔[/] No packages with a [white on black bold]\x5Bmaintained[/]|[white on red bold]no][/] badge were found"
+            "[green]✔[/] No packages with a [white on black bold]\x5bmaintained[/]|[white on red bold]no][/] badge were found"
         )
     else:
         console.print(
-            "[red]✖[/] Packages with a [white on black bold]\x5Bmaintained[/]|[white on red bold]no][/] badge were found:"
+            "[red]✖[/] Packages with a [white on black bold]\x5bmaintained[/]|[white on red bold]no][/] badge were found:"
         )
         output_package_table(unmaintained)
     console.print("\n")
