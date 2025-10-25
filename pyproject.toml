@@ -24,7 +24,7 @@ dev = [
     "black==25.9.0",
     "pytest==8.4.2",
     "pytest-cov==7.0.0",
-    "responses==0.25.7",
+    "responses==0.25.8",
 ]
 
 [project.urls]
