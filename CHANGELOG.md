@@ -1,5 +1,10 @@
 # Changelog
 
+## 📦 0.5.0
+
+* Drop compatibility with python <3.10
+* Tested on python 3.14
+
 ## 📦 0.4.1
 
 * Bugfix: Ensure GraphQL aliases are valid
