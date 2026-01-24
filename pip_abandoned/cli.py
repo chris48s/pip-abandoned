@@ -20,13 +20,11 @@ def get_parser():
     search = subparsers.add_parser(
         "search",
         help="Search for abandoned and deprecated python packages",
-        epilog=textwrap.dedent(
-            """\
+        epilog=textwrap.dedent("""\
             Examples:
             pip-abandoned search myproject/lib/python3.10/site-packages
             pip-abandoned search -r requirements.txt
-        """
-        ),
+        """),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
