@@ -21,7 +21,7 @@ dev = [
     "flit==4.1.0",
     "isort==9.0.2",
     "flake8==7.4.1",
-    "black==26.5.1",
+    "black==26.10.0",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
     "responses==0.26.3",
